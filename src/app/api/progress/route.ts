@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       materialId: asObjectId(materialId) ?? materialId,
     },
     { $set: { percent } },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: "after" }
   );
 
   return NextResponse.json({ percent: doc.percent }, { status: 200 });

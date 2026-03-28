@@ -15,7 +15,7 @@ export async function generateFlashcards(
   
   // Inisialisasi model dengan mode JSON
   const model = genAI.getGenerativeModel({
-    model: env.GEMINI_MODEL || "gemini-flash-latest",
+    model: env.GEMINI_MODEL || "gemini-1.5-flash",
     systemInstruction: STUDY_ASSISTANT_SYSTEM,
     generationConfig: {
       temperature: 0.3,

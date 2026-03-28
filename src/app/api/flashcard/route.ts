@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     const doc = await FlashcardModel.findOneAndUpdate(
       { userId: asObjectId(userId) ?? userId, materialId: asObjectId(materialId) ?? materialId },
       { $set: { cards } },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: "after" }
     );
 
     return NextResponse.json({ cards: doc?.cards ?? cards }, { status: 200 });

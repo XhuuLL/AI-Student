@@ -1,8 +1,53 @@
 import Link from "next/link";
 import { BookOpenText, BrainCircuit, Zap, MessageSquareQuote } from "lucide-react";
 
+// --- KOMPONEN FOOTER ---
+function Footer() {
+  return (
+    <footer className="w-full border-t border-white/5 bg-background/50 py-8 backdrop-blur-md">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
+          
+          {/* Copyright Section */}
+          <div className="flex flex-col items-center gap-1 sm:items-start">
+            <p className="text-sm text-foreground/50">
+              © {new Date().getFullYear()}{" "}
+              <span className="font-semibold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                AI Study Assistant
+              </span>
+              . All rights reserved.
+            </p>
+          </div>
+
+          {/* Status Section */}
+          <div className="flex items-center gap-6 text-sm text-foreground/50">
+            <div className="flex items-center gap-1.5 transition-colors hover:text-emerald-400">
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              System Online
+            </div>
+          </div>
+
+          {/* Credits Section */}
+          <p className="text-xs text-foreground/40 max-w-md text-center sm:text-right">
+            Created by{" "}
+            <a
+              href="https://github.com/XhuuLL"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-emerald-400/80 transition-colors hover:text-emerald-400"
+            >
+              Akhmad Fatkhul Arifin
+            </a>
+          </p>
+
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// --- HALAMAN UTAMA (HOME) ---
 export default function Home() {
-  // Array features sekarang sudah ditambahkan icon
   const features = [
     { id: 1, icon: BookOpenText, title: "Ringkasan", desc: "Dapatkan ringkasan instan & poin penting dari materi." },
     { id: 2, icon: BrainCircuit, title: "Quiz Otomatis", desc: "Uji pemahamanmu dengan soal." },
@@ -11,11 +56,12 @@ export default function Home() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      {/* Background Decoration (Subtle Glow) */}
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
+      {/* Background Decoration */}
       <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[50rem] w-[50rem] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-[120px]" />
 
-      <main className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
+      {/* Main Content Area */}
+      <main className="relative mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
         
         {/* Hero Section */}
         <div className="flex flex-col items-center text-center">
@@ -38,7 +84,6 @@ export default function Home() {
             Upload materi PDF atau teks, dan biarkan AI menyusun ringkasan, membuat kuis, flashcard, hingga menemani sesi tanya jawab belajarmu secara personal.
           </p>
 
-          {/* Call to Action Buttons */}
           <div className="mt-10 flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row">
             <Link
               href="/register"
@@ -62,12 +107,9 @@ export default function Home() {
               key={feature.id}
               className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/30 hover:bg-white/10 hover:shadow-2xl hover:shadow-emerald-500/10"
             >
-              {/* Bagian Icon Lucide */}
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 p-3 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-110">
                 <feature.icon className="h-6 w-6 text-emerald-400" />
               </div>
-              
-              {/* Bagian Teks */}
               <div>
                 <h3 className="mb-2 text-xl font-semibold tracking-tight text-foreground">{feature.title}</h3>
                 <p className="text-sm leading-relaxed text-foreground/70">{feature.desc}</p>
@@ -75,8 +117,10 @@ export default function Home() {
             </div>
           ))}
         </div>
-
       </main>
+
+      {/* FOOTER DIPANGGIL DI SINI */}
+      <Footer />
     </div>
   );
 }

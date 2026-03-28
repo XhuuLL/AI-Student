@@ -16,7 +16,7 @@ export async function generateQuiz(content: string): Promise<QuizItem[]> {
   const genAI = getGemini();
 
   const model = genAI.getGenerativeModel({
-    model: env.GEMINI_MODEL || "gemini-flash-latest",
+    model: env.GEMINI_MODEL || "gemini-1.5-flash",
     systemInstruction: STUDY_ASSISTANT_SYSTEM,
     generationConfig: {
       temperature: 0.4, // Sedikit lebih tinggi agar soal essay lebih variatif

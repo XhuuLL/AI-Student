@@ -84,7 +84,7 @@ export async function POST(req: Request) {
           messages: { $each: [newUserMsg, newAssistantMsg] },
         },
       },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: "after" }
     );
 
     return NextResponse.json(

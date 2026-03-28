@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     const quiz = await QuizModel.findOneAndUpdate(
       { userId: asObjectId(userId) ?? userId, materialId: asObjectId(materialId) ?? materialId },
       { $set: { questions } },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: "after" }
     );
 
     return NextResponse.json({ questions: quiz?.questions ?? questions }, { status: 200 });
