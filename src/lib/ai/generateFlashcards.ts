@@ -1,4 +1,4 @@
-import { getOpenAI } from "@/lib/ai/openai";
+import { getGemini } from "@/lib/ai/gemini"; // Gunakan nama fungsi baru
 import { env } from "@/lib/env";
 import { FLASHCARD_INSTRUCTIONS, STUDY_ASSISTANT_SYSTEM } from "@/lib/ai/prompts";
 import { safeJsonParse } from "@/utils/json";
@@ -8,21 +8,33 @@ export type FlashcardItem = { question: string; answer: string };
 export async function generateFlashcards(
   content: string
 ): Promise<FlashcardItem[]> {
+  // Gemini 1.5 Flash menangani konteks besar dengan sangat baik
   const truncated = content.slice(0, 140_000);
 
-  const completion = await getOpenAI().chat.completions.create({
-    model: env.OPENAI_MODEL,
-    temperature: 0.3,
-    messages: [
-      { role: "system", content: STUDY_ASSISTANT_SYSTEM },
-      {
-        role: "user",
-        content: `${FLASHCARD_INSTRUCTIONS}\n\nMATERI:\n${truncated}`,
-      },
-    ],
+  const genAI = getGemini();
+  
+  // Inisialisasi model dengan mode JSON
+  const model = genAI.getGenerativeModel({
+    model: env.GEMINI_MODEL || "gemini-flash-latest",
+    systemInstruction: STUDY_ASSISTANT_SYSTEM,
+    generationConfig: {
+      temperature: 0.3,
+      responseMimeType: "application/json", // Memaksa Gemini mengeluarkan format JSON
+    },
   });
 
-  const raw = completion.choices[0]?.message?.content ?? "[]";
-  return safeJsonParse(raw);
-}
+  try {
+    const prompt = `${FLASHCARD_INSTRUCTIONS}\n\nMATERI:\n${truncated}`;
+    
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const raw = response.text();
 
+    // safeJsonParse akan mengubah string JSON menjadi array FlashcardItem[]
+    return safeJsonParse(raw);
+  } catch (error) {
+    console.error("Gemini Flashcard Error:", error);
+    // Kembalikan array kosong jika terjadi error agar UI tidak crash
+    return [];
+  }
+}

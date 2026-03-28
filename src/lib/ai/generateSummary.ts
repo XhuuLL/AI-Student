@@ -1,29 +1,43 @@
-import { getOpenAI } from "@/lib/ai/openai";
-import { env } from "@/lib/env";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { env, requireEnv } from "@/lib/env";
 import { STUDY_ASSISTANT_SYSTEM, SUMMARY_INSTRUCTIONS } from "@/lib/ai/prompts";
 import { safeJsonParse } from "@/utils/json";
+
+// Inisialisasi Google AI Studio Client
+const genAI = new GoogleGenerativeAI(requireEnv("GEMINI_API_KEY"));
 
 export async function generateSummary(content: string): Promise<{
   summary: string;
   key_points: string[];
 }> {
+  // Gemini 1.5 Flash mendukung hingga 1jt+ token, 
+  // tapi limit 120k tetap bagus untuk efisiensi.
   const truncated = content.slice(0, 120_000);
 
-  const completion = await getOpenAI().chat.completions.create({
-    model: env.OPENAI_MODEL,
-    temperature: 0.2,
-    messages: [
-      { role: "system", content: STUDY_ASSISTANT_SYSTEM },
-      {
-        role: "user",
-        content: `${SUMMARY_INSTRUCTIONS}\n\nMATERI:\n${truncated}`,
-      },
-    ],
-    // Many models support json_object; if unsupported, parsing still works.
-    response_format: { type: "json_object" },
+  // Inisialisasi model dengan System Instruction
+  const model = genAI.getGenerativeModel({
+    model: env.GEMINI_MODEL || "gemini-flash-latest",
+    systemInstruction: STUDY_ASSISTANT_SYSTEM, // OpenAI System Message pindah ke sini
+    generationConfig: {
+      temperature: 0.2,
+      responseMimeType: "application/json", // Ini pengganti response_format: json_object
+    },
   });
 
-  const raw = completion.choices[0]?.message?.content ?? "{}";
-  return safeJsonParse(raw);
-}
+  try {
+    const prompt = `${SUMMARY_INSTRUCTIONS}\n\nMATERI:\n${truncated}`;
+    
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const raw = response.text();
 
+    // Gunakan parser bawaan kamu agar tetap aman
+    return safeJsonParse(raw);
+  } catch (error) {
+    console.error("Gemini Summary Error:", error);
+    return {
+      summary: "Gagal membuat ringkasan secara otomatis.",
+      key_points: [],
+    };
+  }
+}

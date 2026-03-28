@@ -56,7 +56,7 @@ export async function GET(req: Request) {
     .sort({ createdAt: -1 })
     .skip((page - 1) * pageSize)
     .limit(pageSize)
-    .select({ title: 1, fileUrl: 1, content: 0, summary: 1, keyPoints: 1 });
+    .select({ content: 0 }); 
 
   return NextResponse.json(
     {
