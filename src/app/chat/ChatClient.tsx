@@ -13,8 +13,6 @@ export default function ChatClient({ materialId }: { materialId: string }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // Ref untuk fitur auto-scroll ke bawah
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -48,8 +46,7 @@ export default function ChatClient({ materialId }: { materialId: string }) {
 
     setError(null);
     setLoading(true);
-    
-    // Tambahkan pesan user langsung ke UI agar terasa responsif
+
     const newMessages = [...messages, { role: "user", content: trimmed } as ChatMessageDto];
     setMessages(newMessages);
     setMessage("");
@@ -59,7 +56,7 @@ export default function ChatClient({ materialId }: { materialId: string }) {
         materialId,
         message: trimmed,
       });
-      // Update dengan response dari server
+
       setMessages(res.data.messages ?? []);
     } catch (err: unknown) {
       const e = err as { response?: { data?: { error?: string } } };
