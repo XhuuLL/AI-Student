@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpenText, BrainCircuit, Zap, MessageSquareQuote } from "lucide-react";
+import { BookOpenText, BrainCircuit, Zap, MessageSquareQuote, GraduationCap } from "lucide-react";
+import { DarkModeToggle } from "@/components/DarkModeToggle"; // <-- Pastikan import ini ada
 
 // --- KOMPONEN FOOTER ---
 function Footer() {
@@ -7,8 +8,6 @@ function Footer() {
     <footer className="w-full border-t border-white/5 bg-background/50 py-8 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
-          
-          {/* Copyright Section */}
           <div className="flex flex-col items-center gap-1 sm:items-start">
             <p className="text-sm text-foreground/50">
               © {new Date().getFullYear()}{" "}
@@ -18,16 +17,12 @@ function Footer() {
               . All rights reserved.
             </p>
           </div>
-
-          {/* Status Section */}
           <div className="flex items-center gap-6 text-sm text-foreground/50">
             <div className="flex items-center gap-1.5 transition-colors hover:text-emerald-400">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               System Online
             </div>
           </div>
-
-          {/* Credits Section */}
           <p className="text-xs text-foreground/40 max-w-md text-center sm:text-right">
             Created by{" "}
             <a
@@ -39,7 +34,6 @@ function Footer() {
               Akhmad Fatkhul Arifin
             </a>
           </p>
-
         </div>
       </div>
     </footer>
@@ -56,14 +50,28 @@ export default function Home() {
   ];
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
-      {/* Background Decoration */}
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground transition-colors duration-300">
+      
+      {/* --- HEADER KHUSUS HOME (LOGO + DARK MODE) --- */}
+      <header className="absolute top-0 z-50 w-full px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30">
+              <GraduationCap className="h-5 w-5" />
+            </div>
+            <span className="font-bold tracking-wide text-foreground">
+              AI Study<span className="text-emerald-500">.</span>
+            </span>
+          </div>
+          
+          <DarkModeToggle />
+        </div>
+      </header>
+      {/* ------------------------------------------- */}
+
       <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[50rem] w-[50rem] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-[120px]" />
 
-      {/* Main Content Area */}
       <main className="relative mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
-        
-        {/* Hero Section */}
         <div className="flex flex-col items-center text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400 backdrop-blur-sm transition-colors hover:bg-emerald-500/20">
             <span className="relative flex h-2 w-2">
@@ -100,7 +108,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Features Grid */}
         <div className="mt-24 grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => (
             <div
@@ -119,8 +126,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* FOOTER DIPANGGIL DI SINI */}
       <Footer />
     </div>
   );
-}
+} 

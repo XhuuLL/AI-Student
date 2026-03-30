@@ -8,18 +8,17 @@ export type FlashcardItem = { question: string; answer: string };
 export async function generateFlashcards(
   content: string
 ): Promise<FlashcardItem[]> {
-  // Gemini 1.5 Flash menangani konteks besar dengan sangat baik
   const truncated = content.slice(0, 140_000);
 
   const genAI = getGemini();
   
   // Inisialisasi model dengan mode JSON
   const model = genAI.getGenerativeModel({
-    model: env.GEMINI_MODEL || "gemini-flash-latest", // Gunakan model flash terbaru
+    model: env.GEMINI_MODEL || "gemini-flash-latest", 
     systemInstruction: STUDY_ASSISTANT_SYSTEM,
     generationConfig: {
       temperature: 0.3,
-      responseMimeType: "application/json", // Memaksa Gemini mengeluarkan format JSON
+      responseMimeType: "application/json", 
     },
   });
 
@@ -30,11 +29,9 @@ export async function generateFlashcards(
     const response = await result.response;
     const raw = response.text();
 
-    // safeJsonParse akan mengubah string JSON menjadi array FlashcardItem[]
     return safeJsonParse(raw);
   } catch (error) {
     console.error("Gemini Flashcard Error:", error);
-    // Kembalikan array kosong jika terjadi error agar UI tidak crash
     return [];
   }
 }
