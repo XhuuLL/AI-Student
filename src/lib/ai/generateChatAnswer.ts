@@ -19,7 +19,7 @@ export async function generateChatAnswer(params: {
   
   // 1. Inisialisasi model dengan System Instruction & Materi
   const model = genAI.getGenerativeModel({
-    model: env.GEMINI_MODEL || "gemini-1.5-flash",
+    model: env.GEMINI_MODEL || "gemini-flash-latest",
     systemInstruction: `${STUDY_ASSISTANT_SYSTEM}\n\nMATERI REFERENSI:\n${truncated}`,
     generationConfig: {
       temperature: 0.2,

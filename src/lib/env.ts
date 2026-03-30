@@ -8,7 +8,7 @@ export const env = {
 
   // TAMBAHKAN BARIS INI:
   GEMINI_API_KEY: process.env.GEMINI_API_KEY, 
-  GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-1.5-flash", 
+  GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-flash-latest", 
 };
 
 export function requireEnv(name: keyof typeof env) {

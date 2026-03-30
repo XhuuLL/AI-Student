@@ -92,7 +92,7 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder="Masukkan Password"
                   required
                   autoComplete="new-password" 
                 />

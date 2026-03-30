@@ -137,7 +137,7 @@ export default function UploadPage() {
                   className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-foreground/40 focus:border-emerald-500/50 focus:bg-transparent focus:ring-1 focus:ring-emerald-500/50"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Contoh: Ringkasan Biologi Bab 1"
+                  placeholder="Masukkan Judul Materi"
                 />
               </div>
             </div>

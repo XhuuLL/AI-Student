@@ -16,7 +16,7 @@ export async function generateSummary(content: string): Promise<{
 
   // Inisialisasi model dengan System Instruction
   const model = genAI.getGenerativeModel({
-    model: env.GEMINI_MODEL || "gemini-1.5-flash",
+    model: env.GEMINI_MODEL || "gemini-flash-latest", // Gunakan model flash terbaru
     systemInstruction: STUDY_ASSISTANT_SYSTEM, // OpenAI System Message pindah ke sini
     generationConfig: {
       temperature: 0.2,

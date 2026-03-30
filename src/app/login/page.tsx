@@ -76,7 +76,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   // TYPE BERUBAH TERGANTUNG STATE
                   type={showPassword ? "text" : "password"} 
-                  placeholder="••••••••"
+                  placeholder="Masukkan Password"
                   required
                   autoComplete="current-password"
                 />

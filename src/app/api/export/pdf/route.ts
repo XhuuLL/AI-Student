@@ -32,20 +32,23 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Materi tidak ditemukan" }, { status: 404 });
     }
 
-    // --- LOGIKA FONT KRUSIAL ---
-    // Pastikan kamu SUDAH mendownload file .ttf dan menaruhnya di folder ini
     const fontPath = path.join(process.cwd(), "public/fonts/Inter-Regular.ttf");
-    
-    // Jika font tidak ditemukan, kita lempar error yang jelas agar kamu tahu solusinya
     if (!fs.existsSync(fontPath)) {
       return NextResponse.json({ 
-        error: "Font tidak ditemukan di public/fonts/Inter-Regular.ttf. Silakan download font .ttf dan masukkan ke folder tersebut." 
+        error: "Font tidak ditemukan di public/fonts/Inter-Regular.ttf" 
       }, { status: 500 });
     }
 
-    const doc = new PDFDocument({ margin: 50 });
+    // Konfigurasi Kertas A4
+    const doc = new PDFDocument({ 
+      margin: 50, 
+      size: 'A4',
+      info: {
+        Title: material.title || "Ringkasan Materi",
+        Author: "AI Study Assistant",
+      }
+    });
     
-    // WAJIB panggil ini SEBELUM menulis teks apapun
     doc.font(fontPath);
 
     const chunks: Buffer[] = [];
@@ -55,47 +58,96 @@ export async function GET(req: Request) {
       doc.on("end", () => resolve(Buffer.concat(chunks)));
     });
 
-    // Gunakan judul default jika title kosong untuk menghindari error toUpperCase()
+    // --- DESAIN MULAI DI SINI ---
     const safeTitle = material.title || "Materi Tanpa Judul";
+    const emeraldColor = "#10b981";
+    const darkText = "#1f2937";
+    const lightText = "#6b7280";
 
-    // Isi PDF
-    doc.fontSize(20).text(safeTitle.toUpperCase(), { align: "center" });
-    doc.moveDown();
-    doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke(); 
-    doc.moveDown();
+    // 1. Header Aplikasi (Kanan Atas)
+    doc.fillColor(emeraldColor).fontSize(16).text("AI Study Assistant", { align: "right" });
+    doc.fillColor(lightText).fontSize(9).text("Ringkasan & Poin Penting", { align: "right" });
+    doc.moveDown(2);
 
+    // 2. Judul Materi (Kiri)
+    // Garis aksen hijau
+    doc.rect(50, doc.y, 495, 3).fill(emeraldColor);
+    doc.moveDown(1);
+    
+    doc.fillColor(darkText).fontSize(20).text(safeTitle.toUpperCase(), { align: "left" });
+    doc.moveDown(0.2);
+    doc.fillColor(lightText).fontSize(10).text(`Diunduh pada: ${new Date().toLocaleDateString('id-ID', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    })}`);
+    doc.moveDown(2);
+
+    // 3. Bagian Ringkasan
     if (material.summary) {
-      doc.fontSize(14).fillColor("#059669").text("RINGKASAN", { underline: true });
-      doc.moveDown(0.5);
-      doc.fontSize(11).fillColor("#000000").text(material.summary, { align: "justify", lineGap: 3 });
-      doc.moveDown();
+      // Kotak Header Ringkasan
+      const startY = doc.y;
+      doc.rect(50, startY, 495, 24).fill("#f3f4f6");
+      doc.fillColor(emeraldColor).fontSize(12).text("RINGKASAN MATERI", 60, startY + 7);
+      
+      // Isi Ringkasan
+      doc.x = 50;
+      doc.y = startY + 35;
+      doc.fillColor(darkText).fontSize(11).text(material.summary, { 
+        align: "justify", 
+        lineGap: 5 
+      });
+      doc.moveDown(2);
     }
 
+    // 4. Bagian Poin Penting
     if (material.keyPoints?.length) {
-      doc.fontSize(14).fillColor("#059669").text("POIN PENTING", { underline: true });
-      doc.moveDown(0.5);
-      doc.fontSize(11).fillColor("#000000");
+      // Cek apakah sisa halaman cukup, jika tidak pindah halaman
+      if (doc.y > 700) doc.addPage();
+
+      const startY = doc.y;
+      doc.rect(50, startY, 495, 24).fill("#f3f4f6");
+      doc.fillColor(emeraldColor).fontSize(12).text("POIN KUNCI", 60, startY + 7);
+      
+      // Isi Poin (Custom Bullet)
+      doc.x = 50;
+      doc.y = startY + 35;
+      
       material.keyPoints.forEach((kp: string) => {
-        doc.text(`• ${kp}`, { indent: 15, lineGap: 2 });
+        // Cek halaman sebelum menggambar bullet agar tidak terpotong
+        if (doc.y > 750) doc.addPage();
+        
+        const currentY = doc.y;
+        // Gambar titik bulat (bullet)
+        doc.circle(60, currentY + 6, 3).fill(emeraldColor);
+        // Teks poin
+        doc.fillColor(darkText).fontSize(11).text(kp, 75, currentY, { 
+          align: "justify", 
+          lineGap: 4 
+        });
+        doc.moveDown(0.5);
       });
     }
 
+    // 5. Footer (Absolute Position di Bawah Halaman Terakhir)
+    const bottomMargin = doc.page.height - 50;
+    doc.rect(50, bottomMargin - 15, 495, 1).fill("#e5e7eb"); // Garis tipis
+    doc.fillColor(lightText).fontSize(8).text(
+      "Dokumen ini di-generate secara otomatis oleh AI Study Assistant - Universitas Muhadi Setiabudi", 
+      50, 
+      bottomMargin - 5, 
+      { align: "center" }
+    );
+
     doc.end();
     
-    // 1. Ambil data Buffer dari Promise
     const buffer = await finished;
-
-    // 2. KONVERSI PENTING: Ubah Buffer (Node.js) menjadi Uint8Array (Web Standard)
-    // Ini yang akan menghilangkan error garis merah di VS Code kamu.
     const body = new Uint8Array(buffer);
 
-    // 3. Kirim respon menggunakan Uint8Array
     return new NextResponse(body, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${encodeURIComponent(safeTitle)}.pdf"`,
-        "Content-Length": body.byteLength.toString(), // Gunakan byteLength dari Uint8Array
+        "Content-Length": body.byteLength.toString(),
       },
     });
 
