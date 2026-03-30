@@ -2,6 +2,14 @@
 
 **AI Study Assistant** adalah platform e-learning cerdas berbasis *Artificial Intelligence* (AI) yang dirancang untuk membantu mahasiswa dan pelajar memahami materi perkuliahan dengan lebih cepat, interaktif, dan terstruktur. Cukup upload materi Anda, dan biarkan AI yang mengurus sisanya!
 
+## 📸 Preview Aplikasi
+
+Berikut adalah tampilan antarmuka halaman utama **AI Study Assistant** 
+
+<img src="/public/preview.png" width="100%" alt="Preview Halaman Utama AI Study Assistant"/>
+
+---
+
 ## ✨ Fitur Utama
 
 Aplikasi ini dilengkapi dengan modul AI komprehensif untuk mendukung proses belajar:
@@ -41,7 +49,7 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan proyek ini di komputer loka
 
 1. **Clone Repositori**
    ```bash
-   git clone [https://github.com/manzzzx/ai-study-assistant.git](https://github.com/manzzzx/ai-study-assistant.git)
+   git clone https://github.com/XhuuLL/AI-Student.git
    cd ai-study-assistant
    ```
 
